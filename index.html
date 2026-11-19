@@ -1,0 +1,361 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>墨色に染まる恋</title>
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Yu Gothic", sans-serif;
+  background: linear-gradient(135deg,#f6e9e9,#e7dce8);
+  color: #42333c;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+}
+
+.game {
+  width: 100%;
+  max-width: 550px;
+  background: #fffaf7;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 35px #72546b35;
+}
+
+.header {
+  background: #604456;
+  color: white;
+  text-align: center;
+  padding: 25px 15px;
+}
+
+.header h1 {
+  font-family: serif;
+  letter-spacing: 5px;
+  margin: 5px;
+}
+
+.header p { font-size: 12px; opacity: .8; }
+
+.scene {
+  height: 210px;
+  background: linear-gradient(145deg,#d9c4c9,#eee0df);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 75px;
+  position: relative;
+}
+
+.scene span {
+  position: absolute;
+  bottom: 12px;
+  right: 15px;
+  font-size: 12px;
+  color: #604456;
+}
+
+.content { padding: 22px; }
+
+.status {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 15px;
+}
+
+.bar {
+  background: #eadfe5;
+  height: 8px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+#loveBar {
+  background: #ce779c;
+  height: 100%;
+  width: 0%;
+  transition: .4s;
+}
+
+.name {
+  font-weight: bold;
+  color: #a35c7d;
+  margin-bottom: 10px;
+}
+
+.dialogue {
+  min-height: 115px;
+  line-height: 2;
+  font-size: 15px;
+}
+
+.choices {
+  display: grid;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+button {
+  border: 1px solid #c9a9b8;
+  background: white;
+  padding: 14px;
+  border-radius: 12px;
+  color: #604456;
+  font-size: 14px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+button:hover {
+  background: #f5e6ed;
+  transform: translateY(-2px);
+}
+
+button:active { transform: scale(.98); }
+
+.footer {
+  text-align: center;
+  font-size: 11px;
+  color: #aa929e;
+  padding: 15px;
+}
+
+</style>
+</head>
+
+<body>
+<div class="game">
+
+  <div class="header">
+    <p>青春恋愛シミュレーション</p>
+    <h1>墨色に染まる恋</h1>
+    <p>～君と過ごす放課後～</p>
+  </div>
+
+  <div class="scene" id="scene">
+    🖌️
+    <span id="place">書道室</span>
+  </div>
+
+  <div class="content">
+
+    <div class="status">
+      <span id="day">1日目</span>
+      <span>💗 好感度：<b id="love">0</b></span>
+    </div>
+
+    <div class="bar">
+      <div id="loveBar"></div>
+    </div>
+
+    <div class="name" id="speaker">ナレーション</div>
+
+    <div class="dialogue" id="dialogue">
+      放課後の校舎。
+      あなたは少し緊張しながら書道室の扉を開けた。
+    </div>
+
+    <div class="choices" id="choices">
+      <button onclick="start()">ゲームスタート ♡</button>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    Fictional School Romance Story
+  </div>
+
+</div>
+
+<script>
+let love = 0;
+let day = 1;
+let sceneIndex = 0;
+
+const scenes = [
+{
+  place:"書道室",
+  emoji:"🖌️",
+  speaker:"三宅弘翔",
+  text:"「あれ？見学に来てくれたん？俺、書道部の部長の三宅。」彼は筆を置いて、こちらに微笑んだ。",
+  choices:[
+    ["「よろしくお願いします！」",2],
+    ["「ずっと気になってました」",4],
+    ["緊張して小さくうなずく",1]
+  ]
+},
+{
+  place:"書道室",
+  emoji:"📜",
+  speaker:"三宅弘翔",
+  text:"「そんな緊張せんでええよ（笑）。書道ってやったことある？」",
+  choices:[
+    ["「少しだけあります！」",2],
+    ["「全然ないです。教えてください」",4],
+    ["「字には自信あります！」",1]
+  ]
+},
+{
+  place:"書道室",
+  emoji:"✍️",
+  speaker:"三宅弘翔",
+  text:"「じゃあ、ちょっと書いてみる？」彼はあなたの隣に座り、半紙を広げた。",
+  choices:[
+    ["近くで書き方を教えてもらう",4],
+    ["自分で頑張ってみる",2],
+    ["「部長はどんな字が好き？」",3]
+  ]
+},
+{
+  place:"書道室",
+  emoji:"🌸",
+  speaker:"三宅弘翔",
+  text:"「俺は、気持ちがこもった字が好きかな。」彼は少し照れたように笑った。",
+  choices:[
+    ["「素敵な考え方ですね」",4],
+    ["「私もそう思います！」",3],
+    ["彼の書いた字をじっと眺める",2]
+  ]
+},
+{
+  place:"校舎の廊下",
+  emoji:"🌇",
+  speaker:"ナレーション",
+  text:"帰り道。偶然、弘翔君と廊下で出会った。彼はあなたに気づくと声をかけてきた。",
+  choices:[
+    ["「一緒に帰りませんか？」",4],
+    ["「今日もお疲れさまです！」",2],
+    ["笑顔で手を振る",3]
+  ]
+},
+{
+  place:"帰り道",
+  emoji:"🌆",
+  speaker:"三宅弘翔",
+  text:"「そういえば、明日も部活来る？」彼はあなたの顔を見て、返事を待っている。",
+  choices:[
+    ["「もちろん！弘翔君に会いたいし」",5],
+    ["「書道が楽しくなってきました！」",3],
+    ["「予定が合えば行きます！」",1]
+  ]
+},
+{
+  place:"書道室",
+  emoji:"🌷",
+  speaker:"三宅弘翔",
+  text:"数日後。彼はあなたの書いた作品を手に取った。「これ、前より上手くなってるやん。頑張ったな！」",
+  choices:[
+    ["「弘翔君のおかげです！」",5],
+    ["「もっと上手くなりたいです」",3],
+    ["「褒めてもらえて嬉しい！」",4]
+  ]
+},
+{
+  place:"放課後の中庭",
+  emoji:"🌸",
+  speaker:"三宅弘翔",
+  text:"「なあ、ちょっと話したいことがあるんやけど。」いつもより真剣な表情の彼。夕日が二人を照らしている。",
+  choices:[
+    ["「どうしたの？」",3],
+    ["少し緊張しながら彼を見る",4],
+    ["「私も話したいことがある！」",5]
+  ]
+}
+];
+
+function start() {
+  love = 0;
+  day = 1;
+  sceneIndex = 0;
+  showScene();
+}
+
+function showScene() {
+  const s = scenes[sceneIndex];
+
+  document.getElementById("scene").innerHTML =
+    s.emoji + '<span id="place">' + s.place + '</span>';
+
+  document.getElementById("speaker").textContent = s.speaker;
+  document.getElementById("dialogue").textContent = s.text;
+  document.getElementById("day").textContent = day + "日目";
+  document.getElementById("love").textContent = love;
+  document.getElementById("loveBar").style.width =
+    Math.min(love,30) / 30 * 100 + "%";
+
+  const box = document.getElementById("choices");
+  box.innerHTML = "";
+
+  s.choices.forEach(choice => {
+    const button = document.createElement("button");
+    button.textContent = choice[0];
+    button.onclick = () => choose(choice[1]);
+    box.appendChild(button);
+  });
+}
+
+function choose(points) {
+  love += points;
+  sceneIndex++;
+  day++;
+
+  if (sceneIndex >= scenes.length) {
+    ending();
+  } else {
+    showScene();
+  }
+}
+
+function ending() {
+  document.getElementById("scene").innerHTML =
+    "💗<span>特別な放課後</span>";
+
+  document.getElementById("speaker").textContent =
+    "三宅弘翔";
+
+  let title, message;
+
+  if (love >= 29) {
+    title = "♡ HAPPY END ♡";
+    message =
+      "「最初に会ったときから、もっと話してみたいと思ってた。」\n\n" +
+      "弘翔君は少し照れながら笑った。\n" +
+      "「これからも、一緒に過ごしてくれへん？」\n\n" +
+      "二人の新しい物語が始まった。";
+  } else if (love >= 20) {
+    title = "♡ SWEET END ♡";
+    message =
+      "「一緒におると楽しいわ。また明日も来てな。」\n\n" +
+      "彼の笑顔に、あなたの胸が少しだけ高鳴った。\n" +
+      "二人の距離は、確実に縮まっていた。";
+  } else {
+    title = "♡ FRIEND END ♡";
+    message =
+      "「また書道室に遊びに来てな！」\n\n" +
+      "彼と過ごした時間は、かけがえのない思い出になった。\n" +
+      "これからの二人の関係は、まだ始まったばかり。";
+  }
+
+  document.getElementById("dialogue").innerHTML =
+    "<strong>" + title + "</strong><br><br>" +
+    message.replace(/\n/g,"<br>");
+
+  document.getElementById("choices").innerHTML =
+    '<button onclick="start()">もう一度プレイする ♡</button>';
+
+  document.getElementById("love").textContent = love;
+  document.getElementById("loveBar").style.width =
+    Math.min(love,30) / 30 * 100 + "%";
+}
+</script>
+</body>
+</html>
